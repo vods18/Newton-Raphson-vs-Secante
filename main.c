@@ -1,15 +1,16 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
+#include <math.h>
+#include <libmatheval>
 #include "utils.h"
 
 int main (){
 
   char *equacao = malloc(sizeof(500)) ;
-  char *x0 = malloc(sizeof(500)) ;
-  char *epsilon = malloc(sizeof(500)) ;
-  char *max_iter = malloc(sizeof(500)) ;
+  double x0;
+  double epsilon;
+  int max_iter;
 
   fgets(equacao, 24, stdin);
   fgets(x0, 24, stdin);
