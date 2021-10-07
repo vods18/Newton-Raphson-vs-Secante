@@ -36,7 +36,7 @@ double secante(char *equacao, double x1, double x0){
   func2 = evaluator_evaluate_x(f, x0);
 
   double cima = (func1 * (x1-x0));
-  double baixo = (func1 - func2);  
+  double baixo = (func1 - func2);
 
   return (x1 - (cima/baixo));
 }
@@ -90,19 +90,36 @@ void func_compare(char *equacao, double x0, double epsilon, int max_it){
   double ni1, santigaantiga=0, santiga=x0;
   double newton_crit = 1, secante_crit = 1;
   int i = 0;
-  
+
   do{
 
-    imprime(i,newton_x,newton_crit,secante_x,secante_crit);
+    if (i==0){
+      newton_x = secante_x = newton_raphson(equacao, newton_x);
+      newton_crit = fabs(newton_x - ni1);
+      secante_crit = fabs(secante_x - santiga);
+      imprime(i,newton_x,newton_crit,secante_x,secante_crit);
+      santigaantiga = secante_x;
+      continue;
+    }
 
-    if (i>0)
-      santigaantiga = santiga; //secante anterior anterior
-    santiga = secante_x; //secante anterior  
-    ni1 = newton_x; //newton anterior 
+    if (i==1){
+      ni1 = newton_crit
+      newton_x = secante_x = newton_raphson(equacao, newton_x);
+      newton_crit = fabs(newton_x - ni1);
+      secante_crit = fabs(secante_x - santiga);
+      imprime(i,newton_x,newton_crit,secante_x,secante_crit);
+      santiga = secante_x;
+      continue;
+    }
+
+    imprime(i,newton_x,newton_crit,secante_x,secante_crit);
+    
+    santiga = secante_x; //secante anterior
+    ni1 = newton_x; //newton anterior
 
     if (newton_crit>epsilon)
       newton_x = newton_raphson(equacao, newton_x);
-    
+
     if (secante_crit>epsilon)
       secante_x = secante(equacao, santiga, santigaantiga);
 
