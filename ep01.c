@@ -4,6 +4,7 @@
 #include <math.h>
 #include "utils.h"
 #include <inttypes.h>
+#include <matheval.h>
 
 
 int main (){

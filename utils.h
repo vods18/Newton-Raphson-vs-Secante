@@ -6,11 +6,11 @@
 
 void clean_fgets(char *pos);
 
-void calculaPolinomioEDerivada( double *p, int n, double x, double *px, double *dpx );
+double calculaPolinomioEDerivada( char *p, int n, double x, int bol );
 
-double newton_raphson(char *equacao,double newton_crit, double x);
+double newton_raphson(char *equacao, double x, int grau);
 
-double secante_x();
+double secante_x(char *equacao, double x, int grau);
 
 double EA(double n, double s);
 

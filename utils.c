@@ -4,13 +4,15 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <inttypes.h>
+#include <matheval.h>
 
 
 void clean_fgets(char *pos) { //OK
   strtok(pos, "\n");
 }
 
-void calculaPolinomioEDerivada( double *p, int n, double x, double *px, double *dpx ){ //OK
+double calculaPolinomioEDerivada( char *p, int n, double x, int bol ){ //OK
+  double *px, *dpx;
   double b=p[n], c=b;
   for (int i=n-1; i; --i) {
     b = p[i] + b * x;
@@ -20,21 +22,22 @@ void calculaPolinomioEDerivada( double *p, int n, double x, double *px, double *
   b = p[0] + b * x;
   *px = b;
   *dpx = c;
+  
+  return (bol=0) ? b/c : b;
 }
 
 
 //calcula método newton-raphson
-double newton_raphson(char *equacao, double newton_crit, double x){
+double newton_raphson(char *equacao, double x, int grau){
 
-  // double *px, *dpx;
-  // calculaPolinomioEDerivada(equacao,n,x,px,dpx);
-  // newton_raphson = (x - (*px / *dpx));
-
-   return 1; //retorna aproximação da iteração atual
+   return (x - calculaPolinomioEDerivada(equacao,grau,x,0)); //retorna aproximação da iteração atual
 }
 
-double secante(){
-  return 1;
+double secante(char *equacao, double x1, double x0, int grau){
+  
+  double xt = calculaPolinomioEDerivada(equacao,grau,x1,1);
+  
+  return x1 - ((xt*x1-x0)/(xt-x0));
 
 }
 
@@ -72,16 +75,22 @@ void func_compare(char *equacao, double x0, double epsilon, int max_it){
 
   double newton_x = x0;
   double secante_x = x0;
-  double newton_crit = 0;
-  double secante_crit = 0;
+  double ni1, si0, si1=x0;
+  double newton_crit = 1;
+  double secante_crit = 1;
   int i = 0;
+  int grau = 2; //fazer funcao para calcular grau do polinomio
 
   do{
 
-    newton_x = newton_raphson(equacao, newton_crit , newton_x);
-    secante_x = secante(equacao, secante_crit, secante_x);
-    newton_crit = 0; // implementar calculo
-    secante_crit = 0; // implementar calculo
+    si0 = si1; //secante anterior anterior
+    si1 = secante_x; //secante anterior  
+    ni1 = newton_x; //newton anterior  
+    
+    newton_x = newton_raphson(equacao, newton_x, grau);
+    secante_x = secante(equacao, secante_x, si0, grau);
+    newton_crit = newton_x - ni1; // criterio 1 para newton
+    secante_crit = secante_x - si1; // criterio 1 para secante
 
     printf("%d         ", i); // OK
     printf("%1.16e         ", newton_x);
@@ -91,6 +100,7 @@ void func_compare(char *equacao, double x0, double epsilon, int max_it){
     printf("%1.16e         ", EA(newton_x, secante_x)); //cálculo OK
     printf("%1.16e         ", ER(newton_x, secante_x)); //cálculo OK
     printf("%" PRId64 "         \n", ULP(newton_x, secante_x)); //cálculo OK
+
 
     i++;
 
