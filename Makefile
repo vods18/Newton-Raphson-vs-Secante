@@ -1,6 +1,6 @@
     CC     = gcc -g -std=c11
     CFLAGS =
-    LFLAGS = -lm
+    LFLAGS = -lm 
 
       PROG = ep01
       OBJS = utils.o
