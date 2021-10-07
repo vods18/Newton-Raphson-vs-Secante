@@ -109,6 +109,7 @@ void func_compare(char *equacao, double x0, double epsilon, int max_it){
     newton_crit = fabs(newton_x - ni1); // criterio 1 para newton
     secante_crit = fabs(secante_x - santiga); // criterio 1 para secante
 
+
     i++;
 
   }while(i<max_it && (newton_crit>epsilon || secante_crit>epsilon));
