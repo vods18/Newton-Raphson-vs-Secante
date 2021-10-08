@@ -16,7 +16,7 @@ double EA(double n, double s);
 
 double ER(double n, double s);
 
-int64_t ULP(double n, double s);
+long int ULP(double n, double s);
 
 void func_compare(char *equacao, double x0, double epsilon, int max_it);
 

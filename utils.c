@@ -43,7 +43,7 @@ double secante(char *equacao, double x1, double x0){
 
 double EA(double n, double s){ //OK
   //Erro absoluto real
-  return s - n;
+  return fabs(s - n);
 }
 
 double ER(double n, double s){ //OK
@@ -53,22 +53,17 @@ double ER(double n, double s){ //OK
   return fabs(temp);
 }
 
-int64_t ULP(double n, double s){ //OK
+long int ULP(double n, double s){ //OK
 
   if(n == s){
     return 0;
   }
 
-  int64_t in, is;
+  long int in, is;
   memcpy(&in, &n, sizeof(double));
   memcpy(&is, &s, sizeof(double));
 
-  int64_t distance = is - in;
-  if (distance < 0) {
-    distance = -distance;
-  }
-  distance = distance -1;
-  return distance;
+  return abs(is- in- 1);
 }
 
 void imprime(int i, double newton_x, double newton_crit, double secante_x, double secante_crit){
@@ -94,27 +89,27 @@ void func_compare(char *equacao, double x0, double epsilon, int max_it){
   do{
 
     if (i==0){
-      newton_x = secante_x = newton_raphson(equacao, newton_x);
-      newton_crit = fabs(newton_x - ni1);
-      secante_crit = fabs(secante_x - santiga);
       imprime(i,newton_x,newton_crit,secante_x,secante_crit);
       santigaantiga = secante_x;
+      i++;
       continue;
     }
 
     if (i==1){
-      ni1 = newton_crit
+      ni1 = newton_x;
       newton_x = secante_x = newton_raphson(equacao, newton_x);
       newton_crit = fabs(newton_x - ni1);
-      secante_crit = fabs(secante_x - santiga);
+      secante_crit = newton_crit;
       imprime(i,newton_x,newton_crit,secante_x,secante_crit);
       santiga = secante_x;
+      i++;
       continue;
     }
+    if (i!=2){
+      santigaantiga = santiga;
+      santiga = secante_x; //secante anterior
+    }
 
-    imprime(i,newton_x,newton_crit,secante_x,secante_crit);
-    
-    santiga = secante_x; //secante anterior
     ni1 = newton_x; //newton anterior
 
     if (newton_crit>epsilon)
@@ -126,9 +121,10 @@ void func_compare(char *equacao, double x0, double epsilon, int max_it){
     newton_crit = fabs(newton_x - ni1); // criterio 1 para newton
     secante_crit = fabs(secante_x - santiga); // criterio 1 para secante
 
-
+    imprime(i,newton_x,newton_crit,secante_x,secante_crit);
+    
     i++;
 
-  }while(i<max_it && (newton_crit>epsilon || secante_crit>epsilon));
-  // implementar método de parada para analizar o erro e substituir 0<epsilon
+  }while((i<max_it) && (newton_crit>epsilon && secante_crit>epsilon));
+  
 }
